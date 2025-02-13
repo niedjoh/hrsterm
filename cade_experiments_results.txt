@@ -1,0 +1,110 @@
+--- Example 5 (extended) --
+NCPO:
+YES
+time: 0.080s
+NHORPO:
+YES
+time: 0.022s
+NHORPO+neutralization:
+YES
+time: 0.410s
+--- Example 6 --
+NCPO:
+YES
+time: 0.043s
+NHORPO:
+MAYBE
+time: 0.011s
+NHORPO+neutralization:
+YES
+time: 2.286s
+--- Example 7 --
+NCPO:
+YES
+time: 0.020s
+NHORPO:
+MAYBE
+time: 0.010s
+NHORPO+neutralization:
+MAYBE
+time: 0.322s
+--- Example 5.2 in [BJR15] --
+NCPO:
+YES
+time: 0.015s
+NHORPO:
+MAYBE
+time: 0.009s
+NHORPO+neutralization:
+YES
+time: 0.009s
+--- Example 7.1 in [BJR15] --
+NCPO:
+YES
+time: 0.021s
+NHORPO:
+MAYBE
+time: 0.011s
+NHORPO+neutralization:
+MAYBE
+time: 33.968s
+--- Example 8.19 in [BJR15] --
+NCPO:
+YES
+time: 0.026s
+NHORPO:
+MAYBE
+time: 0.011s
+NHORPO+neutralization:
+MAYBE
+time: 12.408s
+--- Example 7.1 in [JR15] --
+NCPO:
+YES
+time: 0.032s
+NHORPO:
+MAYBE
+time: 0.013s
+NHORPO+neutralization:
+YES
+time: 0.498s
+--- Example 7.2 in [JR15] --
+NCPO:
+MAYBE
+time: 0.016s
+NHORPO:
+MAYBE
+time: 0.010s
+NHORPO+neutralization:
+MAYBE
+time: 0.340s
+--- Example 7.3 in [JR15] --
+NCPO:
+YES
+time: 0.025s
+NHORPO:
+MAYBE
+time: 0.011s
+NHORPO+neutralization:
+YES
+time: 0.166s
+--- neutr.p --
+NCPO:
+MAYBE
+time: 0.012s
+NHORPO:
+MAYBE
+time: 0.008s
+NHORPO+neutralization:
+YES
+time: 0.025s
+--- neutrN.p --
+NCPO:
+YES
+time: 0.018s
+NHORPO:
+YES
+time: 0.010s
+NHORPO+neutralization:
+YES
+time: 0.030s

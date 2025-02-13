@@ -1,0 +1,84 @@
+cabal-version:      3.0
+name:               hrsterm
+version:            0.1.0.0
+
+synopsis: Termination of HRSs using NCPO/NHORPO(+neutralization)
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+
+author:             Johannes Niederhauser
+maintainer:         johannes.niederhauser@uibk.ac.at
+
+executable hrsterm
+  main-is:          Main.hs
+  build-depends:
+       base >= 4.18
+     , hrsterm-lib
+     , fmt
+     , optparse-applicative
+     , prettyprinter
+     , text
+     , time
+  hs-source-dirs:   app
+  default-language: Haskell2010
+  
+library hrsterm-lib
+  exposed-modules:
+      Utils
+    , Utils.FreshMonad
+    , Utils.InputProcessing
+    , Utils.Pretty
+    , Utils.Parse
+    , Utils.RPO
+    , Utils.SMT
+    , Utils.Type
+    , Typ
+    , Typ.Type
+    , Typ.Parse
+    , Typ.Ops
+    , Term
+    , Term.Type
+    , Term.Parse
+    , Term.Ops
+    , Term.BetaEta
+    , Equation
+    , Equation.Type
+    , Equation.Parse
+    , Equation.Ops
+    , ATerm
+    , ATerm.Type
+    , ATerm.Ops
+    , ATerm.BetaEta
+    , Termination.NCPO
+    , Termination.NCPO.Type
+    , Termination.NCPO.Ordering
+    , Termination.NCPO.Solver
+    , Termination.NHORPO
+    , Termination.NHORPO.Type
+    , Termination.NHORPO.Neutralization
+    , Termination.NHORPO.Ordering
+    , Termination.NHORPO.Solver
+    , TPTP
+    , TPTP.Parse
+  build-depends:
+      base >= 4.18
+    , containers
+    , data-default
+    , extra
+    , fmt
+    , hasmtlib ^>= 2.8.1
+    , megaparsec
+    , mtl
+    , prettyprinter
+    , text
+    , transformers ^>= 0.6.1.2
+  hs-source-dirs: src
+  default-language: Haskell2010
+  ghc-options: -Wall
