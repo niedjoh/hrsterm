@@ -4,13 +4,13 @@ or : f -> f -> f
 forall : (t -> f) -> f
 exists : (t -> f) -> f
 
-and P (forall Q) => forall (/\x. and P (Q x))
-and (forall Q) P => forall (/\x. and (Q x) P)
-or P (forall Q) => forall (/\x. or P (Q x))
-or (forall Q) P => forall (/\x. or (Q x) P)
-and P (exists Q) => exists (/\x. and P (Q x))
-and (exists Q) P => exists (/\x. and (Q x) P)
-or P (exists Q) => exists (/\x. or P (Q x))
-or (exists Q) P => exists (/\x. or (Q x) P)
-not (forall Q) => exists (/\x. not (Q x))
-not (exists Q) => forall (/\x. not (Q x))
+and P (forall Q) => forall (/\x. and P Q[x])
+and (forall Q) P => forall (/\x. and Q[x] P)
+or P (forall Q) => forall (/\x. or P Q[x])
+or (forall Q) P => forall (/\x. or Q[x] P)
+and P (exists Q) => exists (/\x. and P Q[x])
+and (exists Q) P => exists (/\x. and Q[x] P)
+or P (exists Q) => exists (/\x. or P Q[x])
+or (exists Q) P => exists (/\x. or Q[x] P)
+not (forall Q) => exists (/\x. not Q[x])
+not (exists Q) => forall (/\x. not Q[x])

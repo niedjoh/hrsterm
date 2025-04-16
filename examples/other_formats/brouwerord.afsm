@@ -6,5 +6,5 @@ suc : o -> o
 rec : o -> a -> (o -> a -> a) -> ((n -> o) -> (n -> a) -> a) -> a
 
 rec zero u V W => u
-rec (suc x) u V W => V x (rec x u V W)
-rec (lim Y) u V W => W Y (/\n. rec (Y n) u V W)
+rec (suc x) u V W => V[x,rec x u V W]
+rec (lim Y) u V W => W[Y,/\n. rec (Y n) u V W]

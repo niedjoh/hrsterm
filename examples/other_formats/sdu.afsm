@@ -2,6 +2,6 @@ case : u -> (a -> i) -> (b -> i) -> i
 inl : a -> u
 inr : b -> u
 
-case (inl x) F G => F x
-case (inr y) F G => G y
-case z (/\x. H (inl x)) (/\y. H (inr y)) => H z
+case (inl x) F G => F[x]
+case (inr y) F G => G[y]
+case z (/\x. H[inl x]) (/\y. H[inr y]) => H[z]

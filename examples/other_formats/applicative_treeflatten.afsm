@@ -7,7 +7,7 @@ node : a -> a -> a
 map : (a -> a) -> a -> a  
 
 map F nil => nil
-map F (cons x v) => cons (F x) (map F v)
+map F (cons x v) => cons F[x] (map F v)
 flatten (node x v) => cons x (concat (map flatten v))
 concat nil => nil
 concat (cons x v) => append x (concat v)

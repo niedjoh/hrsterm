@@ -7,5 +7,5 @@ exists : (t -> f) -> f
 not (not P) => P
 not (and P Q) => or (not P) (not Q)
 not (or P Q) => and (not P) (not Q)
-not (forall R) => exists (/\x. not (R x))
-not (exists R) => forall (/\x. not (R x))
+not (forall R) => exists (/\x. not R[x])
+not (exists R) => forall (/\x. not R[x])

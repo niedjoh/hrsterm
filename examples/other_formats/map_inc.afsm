@@ -9,5 +9,5 @@ cons : b -> a -> a
 plus zero x => x
 plus (s x) y => s (plus x y)
 map F nil => nil
-map F (cons x v) => cons (F x) (map F v)
+map F (cons x v) => cons F[x] (map F v)
 inc v => map (plus (s zero)) v
