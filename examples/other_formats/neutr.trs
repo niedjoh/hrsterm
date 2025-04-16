@@ -1,0 +1,11 @@
+(FUN
+  f : (a -> a) -> a -> a
+  g : a -> a -> a
+)
+(VAR
+  y : a
+  z : a
+)
+(RULES
+  f (\x. g x y) z -> f (\x. g z y) z
+)

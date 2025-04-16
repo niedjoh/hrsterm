@@ -1,0 +1,12 @@
+(FUN
+  fNew : a -> a -> a
+  g : a -> a -> a
+  botAA : a -> a
+)
+(VAR
+  y : a
+  z : a
+)
+(RULES
+  fNew (g (botAA z) y) z -> fNew (g z y) z
+)

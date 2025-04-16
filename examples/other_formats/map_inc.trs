@@ -1,0 +1,22 @@
+(FUN 
+  zero : b
+  nil : a
+  inc : a -> a
+  s : b -> b
+  plus : b -> b -> b
+  map : (b -> b) -> a -> a
+  cons : b -> a -> a
+)
+(VAR
+  F : b -> b
+  x : b
+  y : b
+  v : a
+)
+(RULES
+  plus zero x -> x,
+  plus (s x) y -> s (plus x y),
+  map F nil -> nil,
+  map F (cons x v) -> cons (F x) (map F v),
+  inc v -> map (plus (s zero)) v
+)

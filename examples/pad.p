@@ -57,7 +57,7 @@ thf(sum3,axiom,
 thf(sum4,axiom,
     ! [P: data > proc, Q: data > proc] :
       ( sigma @ (^ [D0 : data] : plus @ (P @ D0) @ (Q @ D0))
-      = plus @ (sigma @ (^ [D0 : data] : P @ D0)) @ (sigma @ (^ [D0 : data] : P @ D0)) ) ) .
+      = plus @ (sigma @ (^ [D0 : data] : P @ D0)) @ (sigma @ (^ [D0 : data] : Q @ D0)) ) ) .
 
 thf(sum5,axiom,
     ! [P: data > proc, X: proc] :

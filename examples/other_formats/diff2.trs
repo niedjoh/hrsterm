@@ -1,0 +1,31 @@
+(FUN 
+  zero : real
+  one : real
+  sin : real -> real
+  cos : real -> real
+  ln : real -> real
+  diff : (real -> real) -> real -> real
+  minus : (real -> real) -> real -> real
+  plus : (real -> real) -> (real -> real) -> real -> real
+  times : (real -> real) -> (real -> real) -> real -> real
+  div : (real -> real) -> (real -> real) -> real -> real
+  s : b -> b
+  plus : b -> b -> b
+  map : (b -> b) -> a -> a
+  cons : b -> a -> a
+)
+(VAR
+  F : real -> real
+  G : real -> real
+  x : real
+  y : real
+)
+(RULES
+  diff (\x. y) -> \x. zero,
+  diff (\x. x) -> \x. one,
+  diff (\x. sin (F x)) -> times (\x. cos (F x)) (diff F),
+  diff (\x. cos (F x)) -> times (minus (\x. sin (F x))) (diff F),
+  diff (plus F G) -> plus (diff F) (diff G),
+  diff (times F G) -> plus (times (diff F) G) (times F (diff G)),
+  diff (\x. ln (F x)) -> div (diff F) F
+)

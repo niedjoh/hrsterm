@@ -1,0 +1,20 @@
+(FUN
+  not : f -> f
+  and : f -> f -> f
+  or : f -> f -> f
+  forall : (t -> f) -> f
+  exists : (t -> f) -> f
+)
+(VAR
+  F : real -> real
+  G : real -> real
+  x : real
+  y : real
+)
+(RULES
+  not (not P) -> P,
+  not (and P Q) -> and (not P) (not Q),
+  not (or P Q) -> or (not P) (not Q),
+  not (forall (\x. R x)) -> exists (\x. not (R x)),
+  not (exists (\x. R x)) -> forall (\x. not (R x))
+)

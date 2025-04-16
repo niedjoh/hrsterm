@@ -1,0 +1,14 @@
+(FUN 
+  nil : list
+  cons : nat -> list -> list
+  map : (nat -> nat) -> list -> list
+)
+(VAR
+  F : nat -> nat
+  x : nat
+  y : list
+)
+(RULES
+  map F nil -> nil,
+  map F (cons x y) -> cons (F x) (map F y)
+)

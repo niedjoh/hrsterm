@@ -1,0 +1,11 @@
+(FUN
+  d : con
+  c : ((con -> list) -> list) -> con
+  e : con -> list
+)
+(VAR
+  X : (con -> list) -> list
+)
+(RULES
+  e (c X) -> X e
+)

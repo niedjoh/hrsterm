@@ -1,0 +1,18 @@
+(FUN
+  case : u -> (a -> i) -> (b -> i) -> i
+  inl : a -> u
+  inr : b -> u
+)
+(VAR
+  x : a
+  y : b
+  z : u
+  F : a -> i
+  G : b -> i
+  H : u -> i
+)
+(RULES
+  case (inl x) F G -> F x,
+  case (inr y) F G -> G y,
+  case z (\x. H (inl x)) (\y. H (inr y)) -> H z 
+)

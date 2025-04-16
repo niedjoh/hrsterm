@@ -1,0 +1,61 @@
+--- Example 4 (extended) --
+WANDA:
+MAYBE
+CSI^ho:
+MAYBE
+Time: 0.001
+--- Example 5 --
+WANDA:
+MAYBE
+CSI^ho:
+./csiho: error occured
+--- Example 6 --
+WANDA:
+MAYBE
+CSI^ho:
+MAYBE
+Time: 0.001
+--- Example 5.2 in [BJR15] --
+WANDA:
+MAYBE
+CSI^ho:
+MAYBE
+Time: 0.000
+--- Example 7.1 in [BJR15] --
+WANDA:
+MAYBE
+CSI^ho:
+./csiho: error occured
+--- Example 8.19 in [BJR15] --
+WANDA:
+MAYBE
+CSI^ho:
+MAYBE
+Time: 0.001
+--- Example 7.1 in [JR15] --
+WANDA:
+MAYBE
+CSI^ho:
+./csiho: error occured
+--- Example 7.2 in [JR15] --
+WANDA:
+MAYBE
+CSI^ho:
+MAYBE
+Time: 0.001
+--- Example 7.3 in [JR15] --
+WANDA:
+MAYBE
+CSI^ho:
+./csiho: error occured
+--- neutr --
+WANDA:
+MAYBE
+CSI^ho:
+./csiho: error occured
+--- neutrN --
+WANDA:
+MAYBE
+CSI^ho:
+YES
+Time: 0.001

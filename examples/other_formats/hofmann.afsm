@@ -1,0 +1,5 @@
+d : con
+c : ((con -> list) -> list) -> con
+e : con -> list
+
+e (c X) => X e
