@@ -6,15 +6,14 @@
   exists : (t -> f) -> f
 )
 (VAR
-  F : real -> real
-  G : real -> real
-  x : real
-  y : real
+  P : f
+  Q : f
+  R : t -> f
 )
 (RULES
   not (not P) -> P,
   not (and P Q) -> and (not P) (not Q),
   not (or P Q) -> or (not P) (not Q),
-  not (forall (\x. R x)) -> exists (\x. not (R x)),
-  not (exists (\x. R x)) -> forall (\x. not (R x))
+  not (forall R) -> exists (\x.not (R x)),
+  not (exists R) -> forall (\x.not (R x))
 )
