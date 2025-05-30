@@ -1,18 +1,18 @@
-echo "--- Example 4 (extended) --"
+echo "--- Example 6 (extended) --"
 echo "NCPO:"
 cabal run hrsterm -- -t ncpo -s z3 examples/diff2.p
 echo "NHORPO:"
 cabal run hrsterm -- -t nhorpo -s z3 examples/diff2.p
 echo "NHORPO+neutralization:"
 cabal run hrsterm -- -t nhorpo_n -s z3 examples/diff2.p
-echo "--- Example 5 --"
+echo "--- Example 7 --"
 echo "NCPO:"
 cabal run hrsterm -- -t ncpo -s z3 examples/nnf.p
 echo "NHORPO:"
 cabal run hrsterm -- -t nhorpo -s z3 examples/nnf.p
 echo "NHORPO+neutralization:"
 cabal run hrsterm -- -t nhorpo_n -s z3 examples/nnf.p
-echo "--- Example 6 --"
+echo "--- Example 8 --"
 echo "NCPO:"
 cabal run hrsterm -- -t ncpo -s z3 examples/map_inc.p
 echo "NHORPO:"

@@ -1,14 +1,14 @@
-echo "--- Example 4 (extended) --"
+echo "--- Example 6 (extended) --"
 echo "WANDA:"
 ./wanda.exe --betafirst -d nt,poly,dp --silent examples/other_formats/diff2.afsm
 echo "CSI^ho:"
 ./csiho --category HO --strategy horpo -p -t examples/other_formats/diff2.trs
-echo "--- Example 5 --"
+echo "--- Example 7 --"
 echo "WANDA:"
 ./wanda.exe --betafirst -d nt,poly,dp --silent examples/other_formats/nnf.afsm
 echo "CSI^ho:"
 ./csiho --category HO --strategy horpo -p -t examples/other_formats/nnf.trs
-echo "--- Example 6 --"
+echo "--- Example 8 --"
 echo "WANDA:"
 ./wanda.exe --betafirst -d nt,poly,dp --silent examples/other_formats/map_inc.afsm
 echo "CSI^ho:"

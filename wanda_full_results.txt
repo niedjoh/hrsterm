@@ -1,61 +1,33 @@
 --- Example 6 (extended) --
 WANDA:
 MAYBE
-CSI^ho:
-MAYBE
-Time: 0.001
 --- Example 7 --
 WANDA:
-MAYBE
-CSI^ho:
-./csiho: error occured
+YES
 --- Example 8 --
 WANDA:
-MAYBE
-CSI^ho:
-MAYBE
-Time: 0.009
+YES
 --- Example 5.2 in [BJR15] --
 WANDA:
-MAYBE
-CSI^ho:
-MAYBE
-Time: 0.009
+YES
 --- Example 7.1 in [BJR15] --
 WANDA:
-MAYBE
-CSI^ho:
-./csiho: error occured
+YES
 --- Example 8.19 in [BJR15] --
 WANDA:
-MAYBE
-CSI^ho:
-MAYBE
-Time: 0.010
+YES
 --- Example 7.1 in [JR15] --
 WANDA:
-MAYBE
-CSI^ho:
-./csiho: error occured
+YES
 --- Example 7.2 in [JR15] --
 WANDA:
-MAYBE
-CSI^ho:
-MAYBE
-Time: 0.009
+YES
 --- Example 7.3 in [JR15] --
 WANDA:
-MAYBE
-CSI^ho:
-./csiho: error occured
+YES
 --- neutr --
 WANDA:
 YES
-CSI^ho:
-./csiho: error occured
 --- neutrN --
 WANDA:
 YES
-CSI^ho:
-YES
-Time: 0.004

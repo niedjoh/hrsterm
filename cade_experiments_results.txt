@@ -1,4 +1,4 @@
---- Example 4 (extended) --
+--- Example 6 (extended) --
 NCPO:
 YES
 time: 0.080s
@@ -8,7 +8,7 @@ time: 0.022s
 NHORPO+neutralization:
 YES
 time: 0.410s
---- Example 5 --
+--- Example 7 --
 NCPO:
 YES
 time: 0.043s
@@ -18,7 +18,7 @@ time: 0.011s
 NHORPO+neutralization:
 YES
 time: 2.286s
---- Example 6 --
+--- Example 8 --
 NCPO:
 YES
 time: 0.020s
