@@ -3,9 +3,11 @@
 module Termination.NCPO (
   module Termination.NCPO.Type,
   module Termination.NCPO.Ordering,
+  module Termination.NCPO.OrderingLnf,
   module Termination.NCPO.Solver
 ) where
 
 import Termination.NCPO.Type
 import Termination.NCPO.Ordering
+import Termination.NCPO.OrderingLnf
 import Termination.NCPO.Solver

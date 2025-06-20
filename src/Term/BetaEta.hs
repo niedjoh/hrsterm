@@ -1,7 +1,12 @@
 -- |functions related to beta/eta conversion
-module Term.BetaEta (shift,subst,betaEta) where
+module Term.BetaEta (shift,subst,betaEta,etaExpand) where
 
+import Control.Exception (assert)
+
+import Typ.Type (FTyp)
+import Typ.Ops (flattenTyp)
 import Term.Type (Term(..))
+import Term.Ops (unstrip,stripWithType)
 
 -- $setup
 --
@@ -78,3 +83,14 @@ betaEta :: Term -> Term
 betaEta s = case betaEta1 s of
   (s',True) -> betaEta s'
   _ -> s
+
+-- only for beta-nfs
+etaExpand :: Term -> FTyp -> Term
+etaExpand (Lam a s) ((b:bs),c) = assert (a == b) (Lam a (etaExpand s (bs,c)))
+etaExpand s (as,a) = addLams (addAps s' as) as where
+  l = length as
+  ((u,a'),us) = stripWithType s
+  (as',_) = flattenTyp a'
+  s' = unstrip ((shift u 0 l),map (\(t,b) -> etaExpand (shift t 0 l) (flattenTyp b)) $ zip us as')
+  addLams s as = foldr Lam s as
+  addAps s as = foldl Ap s [etaExpand (DB i a) (flattenTyp a) | (a,i) <- zip as [l-1,l-2..0]]

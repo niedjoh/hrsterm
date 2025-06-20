@@ -1,0 +1,15 @@
+nil : a
+flatten : a -> a
+concat : a -> a
+cons : a -> a -> a
+append : a -> a -> a
+node : a -> a -> a
+map : (a -> a) -> a -> a  
+
+map (/\z. F[z]) nil => nil
+map (/\z. F[z]) (cons X V) => cons F[X] (map (/\z. F[z]) V)
+flatten (node X V) => cons X (concat (map (/\z. flatten z) V))
+concat nil => nil
+concat (cons X V) => append X (concat V)
+append nil V => V
+append (cons X U) V => cons X (append U V)

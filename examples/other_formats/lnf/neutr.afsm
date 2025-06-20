@@ -1,0 +1,4 @@
+f : (a -> a) -> a -> a
+g : a -> a -> a
+
+f (/\x. g x Y) Z => f (/\x. g Z Y) Z

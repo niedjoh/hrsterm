@@ -1,0 +1,14 @@
+plus : proc -> proc -> proc
+times : proc -> proc -> proc
+delta : proc
+sigma : (data -> proc) -> proc
+
+plus X X => X
+times (plus X Y) Z => plus (times X Z) (times Y Z)
+times (times X Y) Z => times X (times Y Z)
+plus X delta => X
+times delta X => delta
+sigma (/\d0. X) => X
+plus (sigma (/\z. P[z])) P[D] => sigma (/\z. P[z])
+sigma (/\d0. plus P[d0] Q[d0]) => plus (sigma (/\z. P[z])) (sigma (/\z. Q[z]))
+times (sigma (/\z. P[z])) X => sigma (/\d0. times P[d0] X)

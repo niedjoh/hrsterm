@@ -1,0 +1,22 @@
+zero : real
+one : real
+sin : real -> real
+cos : real -> real
+ln : real -> real
+diff : (real -> real) -> real -> real
+minus : (real -> real) -> real -> real
+plus : (real -> real) -> (real -> real) -> real -> real
+times : (real -> real) -> (real -> real) -> real -> real
+div : (real -> real) -> (real -> real) -> real -> real
+s : b -> b
+plus : b -> b -> b
+map : (b -> b) -> a -> a
+cons : b -> a -> a
+
+diff (/\z. y) X => zero
+diff (/\z. z) X => one
+diff (/\z. sin F[z]) X => times (/\z. cos F[z]) (/\w. diff(/\z. F[z]) w) X
+diff (/\z. cos F[z]) X => times (/\w. minus (/\z. sin F[z]) w) (/\w. diff (/\z. F[z]) w) X
+diff (/\w. plus (/\z. F[z]) (/\z. G[z]) w) X => plus (/\w. diff (/\z. F[z]) w) (/\w. diff (/\z. G[z]) w) X
+diff (/\w. times (/\z. F[z]) (/\z. G[z]) w) X => plus (/\w. times (/\v. diff (/\z. F[z]) v) (/\z. G[z]) w) (/\w. times (/\z. F[z]) (/\v. diff (/\z. G[z]) v) w) X
+diff (/\x. ln F[x]) X => div (/\w. diff (/\z. F[z]) w) (/\z. F[z]) X

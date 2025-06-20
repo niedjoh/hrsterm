@@ -1,0 +1,13 @@
+zero : b
+nil : a
+inc : a -> a
+s : b -> b
+plus : b -> b -> b
+map : (b -> b) -> a -> a
+cons : b -> a -> a
+
+plus zero X => X
+plus (s Y) X => s (plus Y X)
+map (/\z. F[z]) nil => nil
+map (/\z. F[z]) (cons X V) => cons F[X] (map (/\z. F[z]) V)
+inc V => map (/\z. plus (s zero) z) V

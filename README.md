@@ -8,9 +8,10 @@ methods are currently supported:
 * the normalized higher-order recursive path order (`-t nhorpo`) based on this 
   [paper](https://doi.org/10.1145/2699913)
 * NHORPO with neutralization (`-t nhorpo_n`) as described in the same paper
-* the normalized computability path order (`-t ncpo`) based on 
-  [CPO](https://doi.org/10.2168/LMCS-11(4:3)2015) 
-  which is theoretically based on my recent CADE submission
+* the beta-eta normal computability path order (`-t ncpo`) based on our
+  [paper](https://arxiv.org/abs/2505.20121) at CADE-30
+* the beta-eta long normal computability path order (`-t ncpo_lnf`) based
+  on our recent WST submission
 
 The tool outputs `YES` if the input system can be proven terminating with
 the corresponding method, otherwise `MAYBE` is reported.
@@ -25,7 +26,8 @@ Type checking is performed automatically after parsing.
 The tool makes heavy use of SMT solvers using the awesome new library 
 [hasmtlib](https://github.com/bruderj15/Hasmtlib). 
 Via the `-s` command-line argument, you can choose your favorite SMT solver to solve the
-constraints computed by `hoco`. (Currently available if installed on your system: `cvc5`, `z3` and `yices2`.)
+constraints computed by `hoco`.
+(Currently available if installed on your system: `cvc5`, `z3` and `yices2`.)
 
 ## Installation / Run
 
@@ -38,7 +40,7 @@ some examples.
 
 ## Experiments
 
-The experiments that come with our recent CADE submission can be reproduced by
+The experiments that come with our CADE paper can be reproduced by
 running `./cade_experiments.sh` from the main directory. Note that if you
 run this for the first time, cabal will fetch the necessary packages and
 compile the application before it starts with the experiments. Time measurement
@@ -50,6 +52,10 @@ The corresponding results for the HORPO implementations of the tools
 can be reproduced by running `./cade_experiments_other_tools.sh` from the main
 directory. We assume that there are executables named `csi` and `wanda.exe`
 as well as the `resouces` folder of WANDA in the main directory.
+
+The comparison of NCPO and NCPO-LNF on the same set of problems which comes with
+our recent WST submission can be reproduced by running `./wst_experiments.sh` from
+the main directory.
 
 ## Testing
 

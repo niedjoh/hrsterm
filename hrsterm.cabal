@@ -59,6 +59,7 @@ library hrsterm-lib
     , Termination.NCPO
     , Termination.NCPO.Type
     , Termination.NCPO.Ordering
+    , Termination.NCPO.OrderingLnf
     , Termination.NCPO.Solver
     , Termination.NHORPO
     , Termination.NHORPO.Type

@@ -1,0 +1,16 @@
+not : f -> f
+and : f -> f -> f
+or : f -> f -> f
+forall : (t -> f) -> f
+exists : (t -> f) -> f
+
+and P (forall (/\z. Q[z])) => forall (/\z. and P Q[z])
+and (forall (/\z. Q[z])) P => forall (/\z. and Q[z] P)
+or P (forall (/\z. Q[z])) => forall (/\z. or P Q[z])
+or (forall (/\z. Q[z])) P => forall (/\z. or Q[z] P)
+and P (exists (/\z. Q[z])) => exists (/\z. and P Q[z])
+and (exists (/\z. Q[z])) P => exists (/\z. and Q[z] P)
+or P (exists (/\z. Q[z])) => exists (/\z. or P Q[z])
+or (exists (/\z. Q[z])) P => exists (/\z. or Q[z] P)
+not (forall (/\z. Q[z])) => exists (/\z. not Q[z])
+not (exists (/\z. Q[z])) => forall (/\z. not Q[z])

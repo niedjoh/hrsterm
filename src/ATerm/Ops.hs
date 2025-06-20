@@ -56,6 +56,31 @@ termToATerm ar u@(Ap s t) = let
 termToATerm ar (Lam a s) = ATerm {term = ALam a as, typ = Ar a (typ as) } where
   as = termToATerm ar s
 
+-- |Converts a term in beta-eta long NF to an algebraic term.
+--
+-- >>> ar = M.fromList [(Id "and",2),(Id "forall",1)]
+-- >>> f = parseTyp "f"
+-- >>> fff = parseTyp "f>f>f"
+-- >>> tf = parseTyp "t>f"
+-- >>> env = Env { cs = [(Id "and",fff),(Id "forall",tf)], fvs = [(Id "P",f),(Id "Q",tf)] }
+-- >>> s = parseTerm env "and P (forall (λx:t.Q x))"
+-- >>> pretty $ lnfTermToATerm ar s
+-- and(P,forall(λx0:t.Q(x0)))
+lnfTermToATerm :: Term -> ATerm
+lnfTermToATerm (C idt a) = ATerm {term = AFun (Normal idt) [], typ = a}
+lnfTermToATerm (FV v a) = ATerm {term = AAFV v [], typ = a}
+lnfTermToATerm (DB i a) = ATerm {term = AADB i [], typ = a}
+lnfTermToATerm u@(Ap s t) = case TO.strip u of
+    (C idt a,ts) -> let ats = map lnfTermToATerm ts in ATerm {term = AFun (Normal idt) ats, typ = funTyp a ats}
+    (FV v a,ts) -> let ats = map lnfTermToATerm ts in ATerm {term = AAFV v ats, typ = funTyp a ats}
+    (DB i a,ts) ->  let ats = map lnfTermToATerm ts in ATerm {term = AADB i ats, typ = funTyp a ats}
+  where
+    funTyp a ats = case applTyps a (map typ ats) of
+      Just b -> b
+      Nothing -> error "impossible case"
+lnfTermToATerm (Lam a s) = ATerm {term = ALam a as, typ = Ar a (typ as) } where
+  as = lnfTermToATerm s
+
 -- |Decomposes an algebraic term into head an spine.
 strip :: ATerm -> (ATerm,[ATerm])
 strip = go [] where
@@ -88,6 +113,12 @@ varLam a v aterm = ATerm {term = ALam a (go 0 aterm), typ = Ar a (typ aterm)} wh
     then u{term = ADB (j+1)}
     else u
   go i u@(ATerm {term = AFun f ts}) = u{term = AFun f (map (go i) ts)}
+  go i u@(ATerm {term = AAFV w ts}) = if v == w
+    then u{term = AADB i (map (go i) ts)}
+    else u{term = AAFV w (map (go i) ts)}
+  go i u@(ATerm {term = AADB j ts}) = if j >= i
+    then u{term = AADB (j+1) (map (go i) ts)}
+    else u{term = AADB j (map (go i) ts)}
   go i u@(ATerm {term = AAp s t}) = u{term = AAp (go i s) (go i t)}
   go i u@(ATerm {term = ALam c s}) = u{term = ALam c (go (i+1) s)}
 
@@ -112,6 +143,10 @@ dbToVar v = go where
     then u{term = AFV v}
     else u
   go i u@(ATerm {term = AFun f ts}) = u{term = AFun f (map (go i) ts)}
+  go i u@(ATerm {term = AAFV v ts}) = u{term = AAFV v (map (go i) ts)}
+  go i u@(ATerm {term = AADB j ts}) = if i == j
+    then u{term = AAFV v ts}
+    else u{term = AADB j (map (go i) ts)}
   go i u@(ATerm {term = AAp s t}) = u{term = AAp (go i s) (go i t)}
   go i u@(ATerm {term = ALam c s}) = u{term = ALam c (go (i+1) s)}
 
@@ -128,6 +163,8 @@ notIn :: Int -> ATerm -> Bool
 notIn _ (ATerm {term = AFV _}) = True
 notIn i (ATerm {term = ADB j}) = i /= j
 notIn i (ATerm {term = AFun _ ts}) = all (notIn i) ts
+notIn i (ATerm {term = AAFV _ ts}) = all (notIn i) ts
+notIn i (ATerm {term = AADB j ts}) = i /= j && all (notIn i) ts
 notIn i (ATerm {term = AAp s t}) = notIn i s && notIn i t
 notIn i (ATerm {term = ALam _ s}) = notIn (i+1) s
 
@@ -138,11 +175,14 @@ danglingDB = go 0 where
   go _ (ATerm {term = AFV _}) = False
   go i (ATerm {term = ADB j}) = j >= i
   go i (ATerm {term = AFun _ ts}) = any (go i) ts
+  go i (ATerm {term = AAFV _ ts}) = any (go i) ts
+  go i (ATerm {term = AADB j ts}) = j >= i || any (go i) ts 
   go i (ATerm {term = AAp s t}) = go i s || go i t
   go i (ATerm {term = ALam _ s}) = go (i+1) s
 
 isFreeVar :: ATerm -> Bool
 isFreeVar (ATerm {term = AFV _}) = True
+isFreeVar (ATerm {term = AAFV _ []}) = True
 isFreeVar _ = False
 
 -- |List of subterms of a given term which are applications.
@@ -160,6 +200,8 @@ applHeadedSubterms :: ATerm -> [ATerm]
 applHeadedSubterms (ATerm {term = AFun _ ts}) = concatMap applHeadedSubterms ts
 applHeadedSubterms s@(ATerm {term = AAp u v}) = s : applHeadedSubterms u ++ applHeadedSubterms v
 applHeadedSubterms (ATerm {term = ALam _ s}) = applHeadedSubterms s
+applHeadedSubterms (ATerm {term = AAFV _ _}) = error "impossible case"
+applHeadedSubterms (ATerm {term = AADB _ _}) = error "impossible case"
 applHeadedSubterms _ = []
 
 -- |Checks whether the given algebraic term is nonversatile, i.e., it is either
@@ -207,6 +249,8 @@ nonVersatile (ATerm {term = ALam _ s}) = case s of
   ATerm {term = AAp t (ATerm {term = AAp u _})} -> nonVersatile t && nonVersatile u
   ATerm {term = AAp t u@(ATerm {term = ALam _ _})} -> nonVersatile t && nonVersatile u
   _ -> nonVersatile s
+nonVersatile (ATerm {term = AAFV _ _}) = error "impossible case"
+nonVersatile (ATerm {term = AADB _ _}) = error "impossible case"
 nonVersatile _ = False
 
 -- |convenience function which returns the negation of 'nonVersatile'

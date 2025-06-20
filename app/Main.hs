@@ -42,7 +42,7 @@ import qualified Termination.NHORPO.Solver as NHORPO
 import qualified Termination.NCPO.Solver as NCPO
 import qualified TPTP.Parse
 
-data TermMethod = NHORPO | NHORPONeutralized | NCPO deriving Show
+data TermMethod = NHORPO | NHORPONeutralized | NCPO | NCPOBetaEtaLong deriving Show
 
 data Args = Args
   { inputFile :: String
@@ -92,11 +92,17 @@ termination NHORPONeutralized s v d bts cTyM hrs = do
       when v . putDoc $ NHORPO.resultDoc res hrs
     Nothing -> putStrLn "SMT Pipe ERROR"
 termination NCPO s v d bts cTyM hrs = do
-  res <- NCPO.checkTermination s d bts cTyM hrs
+  res <- NCPO.checkTermination s d False bts cTyM hrs
   if NCPO.status res
     then putStrLn "YES"
     else putStrLn "MAYBE"
-  when v . putDoc $ NCPO.resultDoc res hrs
+  when v . putDoc $ NCPO.resultDoc False res hrs
+termination NCPOBetaEtaLong s v d bts cTyM hrs = do
+  res <- NCPO.checkTermination s d True bts cTyM hrs
+  if NCPO.status res
+    then putStrLn "YES"
+    else putStrLn "MAYBE"
+  when v . putDoc $ NCPO.resultDoc True res hrs
 
 printES :: String -> ES -> IO ()
 printES s es = do
@@ -125,7 +131,7 @@ argsParser = Args
      <> short 't'
      <> showDefault
      <> value NCPO
-     <> metavar "NHORPO | NHORPO_n | NCPO"
+     <> metavar "NHORPO | NHORPO_n | NCPO | NCPO_lnf"
      <> help "employed termination method" )
   <*> option (eitherReader $ smtSolverFromString . map toLower)
       ( long "smt-solver"
@@ -147,7 +153,8 @@ termMethodFromString :: String -> Either String TermMethod
 termMethodFromString "nhorpo" = Right NHORPO
 termMethodFromString "nhorpo_n" = Right NHORPONeutralized
 termMethodFromString "ncpo" = Right NCPO
-termMethodFromString _ = Left "supported termination methods are 'nhorpo', 'nhorpo_n' and 'ncpo'"
+termMethodFromString "ncpo_lnf" = Right NCPOBetaEtaLong
+termMethodFromString _ = Left "supported termination methods are 'nhorpo', 'nhorpo_n', 'ncpo' and 'ncpo_lnf'"
 
 smtSolverFromString :: String -> Either String SMTSolver
 smtSolverFromString "z3" = Right z3

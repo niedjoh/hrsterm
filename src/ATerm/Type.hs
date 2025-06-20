@@ -23,6 +23,8 @@ data AT =
     AFV Var
   | ADB Int
   | AFun EId [ATerm]
+  | AAFV Var [ATerm]
+  | AADB Int [ATerm]
   | AAp ATerm ATerm
   | ALam Typ ATerm deriving (Eq,Ord,Show)
 
@@ -48,6 +50,12 @@ instance Pretty ATerm where
     go ctx d p (ATerm {term = AFun idt ts}) = if null ts
       then pretty idt
       else pretty idt <> "(" <> concatWith (\x y -> x <> "," <> y) (map (go ctx d p) ts) <> ")"
+    go ctx d p (ATerm {term = AAFV idt ts}) = if null ts
+      then pretty idt
+      else pretty idt <> "(" <> concatWith (\x y -> x <> "," <> y) (map (go ctx d p) ts) <> ")"
+    go ctx d p s@(ATerm {term = AADB i ts}) = if null ts
+      then go ctx d p s{term = ADB i}
+      else go ctx d p s{term = ADB i} <> "(" <> concatWith (\x y -> x <> "," <> y) (map (go ctx d p) ts) <> ")"
     go ctx d p (ATerm {term = AAp s t}) =
       let p' = 6
       in parensIf (p > p') $ go ctx d p' s <+> go ctx d (p'+1) t

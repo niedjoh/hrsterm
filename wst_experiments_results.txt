@@ -1,0 +1,99 @@
+--- Example 6 in [NM25] (extended) --
+NCPO-LNF:
+YES
+time: 0.013s
+NCPO:
+MAYBE
+time: 0.095s
+WANDA:
+YES
+--- Example 7 in [NM25] --
+NCPO-LNF:
+YES
+time: 0.009s
+NCPO:
+YES
+time: 0.022s
+WANDA:
+YES
+--- Example 8 in [NM25] --
+NCPO-LNF:
+YES
+time: 0.009s
+NCPO:
+YES
+time: 0.010s
+WANDA:
+YES
+--- Example 5.2 in [BJR15] --
+NCPO-LNF:
+YES
+time: 0.007s
+NCPO:
+YES
+time: 0.007s
+WANDA:
+YES
+--- Example 7.1 in [BJR15] --
+NCPO-LNF:
+YES
+time: 0.009s
+NCPO:
+YES
+time: 0.010s
+WANDA:
+MAYBE
+--- Example 8.19 in [BJR15] --
+NCPO-LNF:
+YES
+time: 0.010s
+NCPO:
+YES
+time: 0.013s
+WANDA:
+YES
+--- Example 7.1 in [JR15] --
+NCPO-LNF:
+YES
+time: 0.011s
+NCPO:
+YES
+time: 0.016s
+WANDA:
+YES
+--- Example 7.2 in [JR15] --
+NCPO-LNF:
+MAYBE
+time: 0.006s
+NCPO:
+MAYBE
+time: 0.007s
+WANDA:
+YES
+--- Example 7.3 in [JR15] --
+NCPO-LNF:
+YES
+time: 0.010s
+NCPO:
+YES
+time: 0.012s
+WANDA:
+YES
+--- neutr.p --
+NCPO-LNF:
+MAYBE
+time: 0.006s
+NCPO:
+MAYBE
+time: 0.006s
+WANDA:
+YES
+--- neutrN.p --
+NCPO-LNF:
+YES
+time: 0.006s
+NCPO:
+YES
+time: 0.009s
+WANDA:
+YES

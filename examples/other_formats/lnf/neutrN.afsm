@@ -1,0 +1,5 @@
+fNew : a -> a -> a
+g : a -> a -> a
+botAA : a -> a
+
+fNew (g (botAA Z) Y) Z => fNew (g Z Y) Z

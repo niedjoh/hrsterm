@@ -1,0 +1,11 @@
+not : f -> f
+and : f -> f -> f
+or : f -> f -> f
+forall : (t -> f) -> f
+exists : (t -> f) -> f
+
+not (not P) => P
+not (and P Q) => or (not P) (not Q)
+not (or P  Q) => and (not P) (not Q)
+not (forall (/\z. R[z])) => exists (/\z. not R[z])
+not (exists (/\z. R[z])) => forall (/\z. not R[z])

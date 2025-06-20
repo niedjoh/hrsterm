@@ -1,6 +1,9 @@
 -- |functions related to beta/eta conversion
 module ATerm.BetaEta where
 
+import Typ.Type (Typ(..),FTyp)
+import Typ.Ops (flattenTyp,unflattenTyp)
+import Term.Type (Var)
 import ATerm.Type (ATerm(..),AT(..))
 
 -- $setup
@@ -33,6 +36,10 @@ shift s@(ATerm {term = ADB k}) i j
   | k < i     = s
   | otherwise = s{term = ADB (k+j)}
 shift s@(ATerm {term = AFun f ts}) i j = s{term = AFun f (map (\u -> shift u i j) ts)}
+shift s@(ATerm {term = AAFV v ts}) i j = s{term = AAFV v (map (\u -> shift u i j) ts)}
+shift s@(ATerm {term = AADB k ts}) i j
+  | k < i     = s{term = AADB k (map (\u -> shift u i j) ts)}
+  | otherwise = s{term = AADB (k+j) (map (\u -> shift u i j) ts)}
 shift s@(ATerm {term = AAp u v}) i j = s{term = AAp (shift u i j) (shift v i j)}
 shift s@(ATerm {term = ALam a u}) i j = s{term = ALam a (shift u (i+1) j)}
 
@@ -54,7 +61,9 @@ subst s@(ATerm {term = ADB k}) i u = case compare k i of
   LT -> s{term = ADB k}
   EQ -> u
   GT -> s{term = ADB (k-1)}
-subst s@(ATerm {term = AFun f ts}) i u = s{term = AFun f (map (\v -> subst v i u) ts)}
+subst s@(ATerm {term = AFun f ts}) i u = s{term = AFun f (map (\t -> subst t i u) ts)}
+subst s@(ATerm {term = AAFV v ts}) i u = error "impossible case"
+subst s@(ATerm {term = AADB k ts}) i u = error "impossible case"
 subst s@(ATerm {term = AAp t w}) i u = s{term = AAp (subst t i u) (subst w i u)}
 subst s@(ATerm {term = ALam a v}) i u = s{term = ALam a (subst v (i+1) (shift u 0 1))}
 
@@ -63,6 +72,8 @@ notFreeIn :: Int -> ATerm -> Bool
 notFreeIn _ (ATerm {term = AFV _}) = True
 notFreeIn i (ATerm {term = ADB j}) = i /= j
 notFreeIn i (ATerm {term = AFun _ ts}) = all (notFreeIn i) ts
+notFreeIn i (ATerm {term = AAFV _ ts}) = error "impossible case"
+notFreeIn i (ATerm {term = AADB j ts}) = error "impossible case"
 notFreeIn i (ATerm {term = AAp s t}) = notFreeIn i s && notFreeIn i t
 notFreeIn i (ATerm {term = ALam _ s}) = notFreeIn (i+1) s
 
@@ -98,3 +109,31 @@ betaEta :: ATerm -> ATerm
 betaEta s = case betaEta1 s of
   (s',True) -> betaEta s'
   _ -> s
+
+substEtaLong :: ATerm -> Int -> ATerm -> ATerm
+substEtaLong s@(ATerm {term = AFun f ts}) i u = s{term = AFun f (map (\t -> substEtaLong t i u) ts)}
+substEtaLong s@(ATerm {term = AAFV v ts}) i u = s{term = AAFV v (map (\t -> substEtaLong t i u) ts)}
+substEtaLong s@(ATerm {term = AADB k ts}) i u = case compare k i of
+  LT -> s{term = AADB k (map (\t -> substEtaLong t i u) ts)}
+  EQ -> betaElApp u (map (\t -> substEtaLong t i u) ts)
+  GT -> s{term = AADB (k-1) (map (\t -> substEtaLong t i u) ts)}
+substEtaLong s@(ATerm {term = ALam a t}) i u = s{term = ALam a (substEtaLong t (i+1) (shift u 0 1))}
+
+betaElApp :: ATerm -> [ATerm] -> ATerm
+betaElApp s@(ATerm {term = ALam a u}) (t:ts) = betaElApp (substEtaLong u 0 t) ts
+betaElApp s [] = s
+betaElApp _ _ = error "impossible case"
+
+etaExpandGen :: (Either Var Int) -> FTyp -> ATerm
+etaExpandGen evi (as,b) = foldr (\a t -> ATerm {term = ALam a t, typ = Ar a (typ t)}) base as where
+  k = length as
+  choice = case evi of
+    Left var -> AAFV var
+    Right j -> AADB (j+k)
+  base = ATerm {term = choice [etaExpandGen (Right (k-i)) (flattenTyp a) | (a,i) <- zip as [1..]], typ = b}
+
+etaExpandVar :: Var -> FTyp -> ATerm
+etaExpandVar var = etaExpandGen (Left var)
+
+etaExpandDB :: Int -> FTyp -> ATerm
+etaExpandDB j = etaExpandGen (Right j)

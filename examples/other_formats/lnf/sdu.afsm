@@ -1,0 +1,7 @@
+case : u -> (a -> i) -> (b -> i) -> i
+inl : a -> u
+inr : b -> u
+
+case (inl X) (/\z. F[z]) (/\z.G[z]) => F[X]
+case (inr Y) (/\z. F[z]) (/\z.G[z]) => G[Y]
+case Z (/\x. H[inl x]) (/\y. H[inr y]) => H[Z]

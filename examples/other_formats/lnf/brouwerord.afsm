@@ -1,0 +1,10 @@
+lim : (n -> o) -> o
+zeroN : n
+sucN : n -> n
+zero : o
+suc : o -> o
+rec : o -> a -> (o -> a -> a) -> ((n -> o) -> (n -> a) -> a) -> a
+
+rec zero U (/\p,q. V[p,q]) (/\p,q. W[/\r.p r,/\r. q r]) => U
+rec (suc X) U (/\p,q. V[p,q]) (/\p,q. W[/\r.p r,/\r. q r]) => V[X,rec X U (/\p,q. V[p,q]) (/\p,q. W[/\r.p r,/\r. q r])]
+rec (lim (/\z. Y[z])) U (/\p,q. V[p,q]) (/\p,q. W[/\r.p r,/\r. q r]) => W[/\z. Y[z],/\n. rec Y[n] U (/\p,q. V[p,q]) (/\p,q. W[/\r.p r,/\r. q r])]
