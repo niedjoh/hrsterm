@@ -35,47 +35,48 @@ ifCompare NoCompare _ y = y
 
 -- |A wrapper for NCPO. Both terms are assumed to be in beta-eta long normal form.
 ncpoWrapperLnf :: (Orderable a, IsStatus b, Equatable b) => CPOInfo a b -> ATerm -> ATerm -> FreshM Constraint
-ncpoWrapperLnf cpoinfo s t = runReaderT (ncpo Compare S.empty s t) cpoinfo
+ncpoWrapperLnf cpoinfo s t = runReaderT (ncpo False Compare S.empty s t) cpoinfo
 
 -- |Implementation of NCPO. The first term is assumed to be in beta-eta long normal form.
 ncpo :: (Orderable a, IsStatus b, Equatable b) =>
-  TypeComparison -> Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-ncpo typeComp vars s@(ATerm {term = sTerm, typ = a}) t@(ATerm {term = tTerm, typ = b}) = do
+  Bool -> TypeComparison -> Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+ncpo varRec typeComp vars s@(ATerm {term = sTerm, typ = a}) t@(ATerm {term = tTerm, typ = b}) = do
   ifCompare typeComp (weakTypeOrder a b) (pure true) <&&> case sTerm of
     AFun f ss -> if any (== t) (S.map (\(v,b) -> etaExpandVar v (flattenTyp b)) vars)
       then pure true
-      else or <$> traverse (\u -> bawo u t) ss <||>  case tTerm of
-        (AFun g ts) -> funFunCase vars s f g ss ts
-        (AAFV var ts) -> if all (\ti -> any (\(v,b) -> ti == etaExpandVar v (flattenTyp b)) vars) ts
+      else or <$> traverse (\u -> bawo varRec u t) ss <||>  case tTerm of
+        (AFun g ts) -> funFunCase varRec vars s f g ss ts
+        (AAFV var ts) -> if varRec
           then pure false
-          else and <$> traverse (ncpo NoCompare vars s) (etaExpandVar var (map typ ts,b) : ts)
+          else ncpo True NoCompare vars s (etaExpandVar var (map typ ts,b)) <&&>
+               (and <$> traverse (ncpo varRec NoCompare vars s) ts)
         (ALam c v) -> do
           z <- lift freshVar
-          ncpo NoCompare (S.insert (z,c) vars) s (dbToVar z 0 v)
+          ncpo varRec NoCompare (S.insert (z,c) vars) s (dbToVar z 0 v)
         _ -> pure false
     ALam c u -> do
       z <- lift freshVar
       let u' = dbToVar z 0 u
-      ncpoWeak Compare vars u' t <||> case tTerm of
+      ncpoWeak varRec Compare vars u' t <||> case tTerm of
         ALam d v -> do
           let v' = dbToVar z 0 v
           if c == d
-            then ncpo NoCompare vars u' v'
-            else ncpo NoCompare vars s v'
+            then ncpo varRec NoCompare vars u' v'
+            else ncpo varRec NoCompare vars s v'
         _ -> pure false
     _ -> pure false
   
 -- |case s = f(ss) > g(ts) where f is big
 funFunCase :: (Orderable a, IsStatus b, Equatable b) =>
-  Set (Var,Typ) -> ATerm -> EId -> EId -> [ATerm] -> [ATerm] -> ReaderT (CPOInfo a b) FreshM Constraint
-funFunCase vars s f g ss ts = do
+  Bool -> Set (Var,Typ) -> ATerm -> EId -> EId -> [ATerm] -> [ATerm] -> ReaderT (CPOInfo a b) FreshM Constraint
+funFunCase varRec vars s f g ss ts = do
   st <- asks (stat . rpoInfo)
   cp <- asks (cPrec . rpoInfo)
-  let mulLex = isLex (st ! f) <&& ncpoLex (sswo vars) (ncpo NoCompare vars s) ss ts <||>
-               isMul (st ! f) <&& ncpoMul (sswo vars) ss ts
+  let mulLex = isLex (st ! f) <&& ncpoLex (sswo varRec vars s) (ncpo varRec NoCompare vars s) ss ts <||>
+               isMul (st ! f) <&& ncpoMul (sswo varRec vars s) ss ts
   if f == g
     then mulLex
-    else cp ! f >? cp ! g <&& (and <$> traverse (ncpo NoCompare vars s) ts) <||>
+    else cp ! f >? cp ! g <&& (and <$> traverse (ncpo varRec NoCompare vars s) ts) <||>
          (cp ! f === cp ! g && st ! f === st ! g) <&& mulLex
 
 -- |lexicographic extension of NCPO generalized by comparison functions
@@ -97,10 +98,10 @@ ncpoMul comp ss ts =
 
 -- |weak NCPO orientation (reflexive closure)
 ncpoWeak :: (Orderable a, IsStatus b, Equatable b) =>
- TypeComparison  -> Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-ncpoWeak typComp vars s t = if s == t
+ Bool -> TypeComparison  -> Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+ncpoWeak varRec typComp vars s t = if s == t
   then pure true
-  else ncpo typComp vars s t
+  else ncpo varRec typComp vars s t
 
 -- |A strict order on types for NCPO as defined in the 2015 LMCS article
 typeOrder :: Orderable a => Typ -> Typ -> ReaderT (CPOInfo a b) FreshM Constraint
@@ -128,12 +129,12 @@ weakTypeOrder a b = if a == b
 -- * weak orient with NCPO
 --
 -- Note that we only allow to proceed to subterms via "nonversatile paths"
-bawo :: (Orderable a, IsStatus b, Equatable b) => ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-bawo s t = awo s t <||> go s t false where
+bawo :: (Orderable a, IsStatus b, Equatable b) => Bool -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+bawo varRec s t = awo varRec s t <||> go s t false where
   varCond u = not . bool $ danglingDB u
   go u@(ATerm {term = AFun _ us, typ = Base idt}) v recCase = do
     basic <- asks isBasic
-    ((recCase && basic ! idt && varCond v) <&& awo u v) <||> (or <$> traverse (\u' -> go u' v true) us)
+    ((recCase && basic ! idt && varCond v) <&& awo varRec u v) <||> (or <$> traverse (\u' -> go u' v true) us)
   go (ATerm {term = AFun _ us}) v _ = or <$> traverse (\u' -> go u' v true) us
   go u@(ATerm {term = ALam _ w}) v _ = go w v true
   go _ _ _ = pure false
@@ -151,15 +152,16 @@ accSubt _ _ _ = pure false
 -- * weak orient with NCPO
 --
 -- Note that we only allow to proceed to subterms for applied function symbols
-awo :: (Orderable a, IsStatus b, Equatable b) => ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-awo s t = ncpoWeak Compare S.empty s t <||> accSubt (ncpoWeak Compare S.empty) s t
+awo :: (Orderable a, IsStatus b, Equatable b) => Bool -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+awo varRec s t = ncpoWeak varRec Compare S.empty s t <||> accSubt (ncpoWeak varRec Compare S.empty) s t
 
 -- |structurally smaller + weak orient
 --
 -- Note that we only allow to proceed to subterms via "nonversatile paths"
 -- (nonversatility is preserved by applying a nonversatile term to arbitrary terms)
-sswo :: (Orderable a, IsStatus b, Equatable b) => Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-sswo vars s@(ATerm {typ = st}) t = ncpoWeak Compare S.empty s t <||> (bool (base st) <&& accSubt comp s t) where
+sswo :: (Orderable a, IsStatus b, Equatable b) =>
+  Bool -> Set (Var,Typ) -> ATerm -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+sswo varRec vars u s@(ATerm {typ = st}) t = ncpoWeak varRec Compare S.empty s t <||> (bool (base st) <&& (ncpo varRec NoCompare vars u t <&&> (accSubt comp s t))) where
   (as, a) = flattenTyp st
   idtA = case a of
     Base idt -> idt
