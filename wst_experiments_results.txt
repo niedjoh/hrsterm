@@ -4,7 +4,7 @@ YES
 time: 0.013s
 NCPO:
 MAYBE
-time: 0.095s
+time: 0.084s
 WANDA:
 YES
 --- Example 7 in [NM25] --
@@ -13,7 +13,7 @@ YES
 time: 0.009s
 NCPO:
 YES
-time: 0.022s
+time: 0.021s
 WANDA:
 YES
 --- Example 8 in [NM25] --
@@ -22,7 +22,7 @@ YES
 time: 0.009s
 NCPO:
 YES
-time: 0.010s
+time: 0.009s
 WANDA:
 YES
 --- Example 5.2 in [BJR15] --
@@ -37,7 +37,7 @@ YES
 --- Example 7.1 in [BJR15] --
 NCPO-LNF:
 YES
-time: 0.009s
+time: 0.010s
 NCPO:
 YES
 time: 0.010s
@@ -67,7 +67,7 @@ MAYBE
 time: 0.006s
 NCPO:
 MAYBE
-time: 0.007s
+time: 0.006s
 WANDA:
 YES
 --- Example 7.3 in [JR15] --
@@ -82,10 +82,10 @@ YES
 --- neutr.p --
 NCPO-LNF:
 MAYBE
-time: 0.006s
+time: 0.005s
 NCPO:
 MAYBE
-time: 0.006s
+time: 0.005s
 WANDA:
 YES
 --- neutrN.p --

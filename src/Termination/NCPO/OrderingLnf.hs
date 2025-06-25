@@ -72,8 +72,8 @@ funFunCase :: (Orderable a, IsStatus b, Equatable b) =>
 funFunCase varRec vars s f g ss ts = do
   st <- asks (stat . rpoInfo)
   cp <- asks (cPrec . rpoInfo)
-  let mulLex = isLex (st ! f) <&& ncpoLex (sswo varRec vars s) (ncpo varRec NoCompare vars s) ss ts <||>
-               isMul (st ! f) <&& ncpoMul (sswo varRec vars s) ss ts
+  let mulLex = isLex (st ! f) <&& ncpoLex (sswo varRec vars) (ncpo varRec NoCompare vars s) ss ts <||>
+               isMul (st ! f) <&& ncpoMul (sswo varRec vars) ss ts
   if f == g
     then mulLex
     else cp ! f >? cp ! g <&& (and <$> traverse (ncpo varRec NoCompare vars s) ts) <||>
@@ -160,8 +160,8 @@ awo varRec s t = ncpoWeak varRec Compare S.empty s t <||> accSubt (ncpoWeak varR
 -- Note that we only allow to proceed to subterms via "nonversatile paths"
 -- (nonversatility is preserved by applying a nonversatile term to arbitrary terms)
 sswo :: (Orderable a, IsStatus b, Equatable b) =>
-  Bool -> Set (Var,Typ) -> ATerm -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
-sswo varRec vars u s@(ATerm {typ = st}) t = ncpoWeak varRec Compare S.empty s t <||> (bool (base st) <&& (ncpo varRec NoCompare vars u t <&&> (accSubt comp s t))) where
+  Bool -> Set (Var,Typ) -> ATerm -> ATerm -> ReaderT (CPOInfo a b) FreshM Constraint
+sswo varRec vars s@(ATerm {typ = st}) t = ncpoWeak varRec Compare S.empty s t <||> (bool (base st) <&& (accSubt comp s t)) where
   (as, a) = flattenTyp st
   idtA = case a of
     Base idt -> idt
@@ -177,7 +177,7 @@ sswo varRec vars u s@(ATerm {typ = st}) t = ncpoWeak varRec Compare S.empty s t 
           then pure false
           else do
             let possibleVarLists = allPossibilities candidateVars
-                f xs = pure . bool $ (betaElApp u (map (\(x,c) -> etaExpandVar x (flattenTyp  c)) xs)) == t -- TODO possible? ncpoWeak Compare S.empty (betaElApp u (map (\(x,c) -> etaExpandVar x (flattenTyp  c)) xs)) t   
+                f xs = pure . bool $ (betaElApp u (map (\(x,c) -> etaExpandVar x (flattenTyp  c)) xs)) == t
             or <$> traverse f possibleVarLists
   allPossibilities [] = [[]]
   allPossibilities (xs:xss) = concat [map (x:) (allPossibilities xss) | x <- xs]
